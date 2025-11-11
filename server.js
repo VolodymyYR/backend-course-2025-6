@@ -173,6 +173,27 @@ app.put('/inventory/:id/photo', upload.single('photo'), (req, res) => {
     res.status(200).json({ success: true, message: 'Фото успішно оновлено.', data: inventoryData[itemIndex] });
 });
 
+// 6.6. DELETE /inventory/:id: Видалення об'єкта
+app.delete('/inventory/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const itemIndex = inventoryData.findIndex(i => i.id === id);
+
+    if (itemIndex === -1) {
+        return res.status(404).json({ success: false, message: `Об'єкт з ID ${id} не знайдено.` });
+    }
+
+    const [deletedItem] = inventoryData.splice(itemIndex, 1);
+    
+    // Видалення файлу з диска
+    if (deletedItem.photo_filename) {
+        const filePath = path.join(UPLOAD_DIR, deletedItem.photo_filename);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    }
+    
+    res.status(200).json({ success: true, message: `Об'єкт з ID ${id} успішно видалено.` });
+});
 
 // ----------------------------------------------------
 // (РОУТИ API БУДУТЬ ТУТ)
