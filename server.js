@@ -246,6 +246,14 @@ app.get('/search', (req, res) => {
     res.status(200).json({ success: true, data: responseData });
 });
 
+// --- 7. ДОКУМЕНТАЦІЯ SWAGGER ---
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// --- 8. ОБРОБКА НЕІСНУЮЧИХ РОУТІВ (404) ---
+app.use((req, res) => {
+    res.status(404).json({ success: false, message: 'Неіснуючий маршрут.' });
+});
+
 // Додаткова вимога: Обробка невірних методів для /search
 // Якщо хтось спробує DELETE, PUT і т.д.
 app.all('/search', (req, res, next) => {

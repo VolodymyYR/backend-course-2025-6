@@ -1,0 +1,230 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Inventory Service API",
+        "version": "1.0.0",
+        "description": "API для управління інвентаризаційними об'єктами. Реалізовано в рамках ЛР №6."
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8080",
+            "description": "Локальний сервер"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Inventory",
+            "description": "Операції з інвентарем"
+        }
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Реєстрація нового об'єкта (з фото)",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "inventory_name": {
+                                        "type": "string",
+                                        "description": "Обов'язкове ім'я об'єкта"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "photo": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Фото об'єкта"
+                                    }
+                                },
+                                "required": [
+                                    "inventory_name"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Об'єкт успішно створено",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Невірний запит (відсутнє ім'я)"
+                    }
+                }
+            }
+        },
+        "/inventory": {
+            "get": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Отримати список всіх об'єктів",
+                "responses": {
+                    "200": {
+                        "description": "Список об'єктів"
+                    }
+                }
+            }
+        },
+        "/inventory/{id}": {
+            "get": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Отримати об'єкт за ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Дані об'єкта"
+                    },
+                    "404": {
+                        "description": "Об'єкт не знайдено"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Оновити опис або ім'я об'єкта",
+                "responses": {
+                    "200": {
+                        "description": "Оновлено"
+                    },
+                    "404": {
+                        "description": "Об'єкт не знайдено"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Видалити об'єкт за ID",
+                "responses": {
+                    "200": {
+                        "description": "Видалено"
+                    },
+                    "404": {
+                        "description": "Об'єкт не знайдено"
+                    }
+                }
+            }
+        },
+        "/inventory/{id}/photo": {
+            "get": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Отримати фото об'єкта (Content-Type: image/jpeg)",
+                "responses": {
+                    "200": {
+                        "description": "Фото у форматі image/jpeg"
+                    },
+                    "404": {
+                        "description": "Фото не знайдено"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Оновити фото об'єкта",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "photo": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Нове фото"
+                                    }
+                                },
+                                "required": [
+                                    "photo"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Фото оновлено"
+                    },
+                    "404": {
+                        "description": "Об'єкт не знайдено"
+                    }
+                }
+            }
+        },
+        "/search": {
+            "get": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Пошук об'єкта за ID (з форми)",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "includePhoto",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": ["on"],
+                            "description": "Якщо 'on', повертає URL фото"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Знайдений об'єкт"
+                    },
+                    "404": {
+                        "description": "Об'єкт не знайдено"
+                    }
+                }
+            },
+            "post": {
+                 "tags": [
+                    "Inventory"
+                ],
+                "summary": "Метод POST заборонено",
+                 "responses": {
+                    "405": {
+                        "description": "Метод POST не дозволено для цього роута"
+                    }
+                }
+            }
+        }
+    }
+}
