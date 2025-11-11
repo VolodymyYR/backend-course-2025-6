@@ -218,6 +218,44 @@ app.get('/inventory/:id/photo', (req, res) => {
     res.status(200).sendFile(filePath);
 });
 
+app.get('/search', (req, res) => {
+    const id = parseInt(req.query.id);
+    const includePhoto = req.query.includePhoto; // 'on' якщо відмічено
+
+    if (isNaN(id)) {
+        return res.status(400).json({ success: false, message: 'Необхідно вказати валідний ID.' });
+    }
+    
+    const item = inventoryData.find(i => i.id === id);
+
+    if (!item) {
+        return res.status(404).json({ success: false, message: `Об'єкт з ID ${id} не знайдено.` });
+    }
+
+    const responseData = {
+        id: item.id,
+        inventory_name: item.inventory_name,
+        description: item.description,
+    };
+
+    // Додаємо URL фото, якщо прапорець встановлено
+    if (includePhoto === 'on' && item.photo_url) {
+        responseData.photo_url = item.photo_url;
+    }
+
+    res.status(200).json({ success: true, data: responseData });
+});
+
+// Додаткова вимога: Обробка невірних методів для /search
+// Якщо хтось спробує DELETE, PUT і т.д.
+app.all('/search', (req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') { // GET - дозволено
+        res.status(405).send(`Method ${req.method} not allowed for /search.`); // 405 Method Not Allowed
+    } else {
+        next(); // Пропускаємо далі до GET-обробника
+    }
+});
+
 // ----------------------------------------------------
 // (РОУТИ API БУДУТЬ ТУТ)
 // ----------------------------------------------------
