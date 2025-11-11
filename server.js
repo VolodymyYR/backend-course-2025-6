@@ -124,6 +124,54 @@ app.get('/inventory/:id', (req, res) => {
     res.status(200).json({ success: true, data: item });
 });
 
+// 6.4. PUT /inventory/:id: Оновлення інформації про об'єкт
+app.put('/inventory/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const { inventory_name, description } = req.body;
+    const itemIndex = inventoryData.findIndex(i => i.id === id);
+
+    if (itemIndex === -1) {
+        return res.status(404).json({ success: false, message: `Об'єкт з ID ${id} не знайдено.` });
+    }
+
+    if (inventory_name) {
+        inventoryData[itemIndex].inventory_name = inventory_name;
+    }
+    if (description) {
+        inventoryData[itemIndex].description = description;
+    }
+    
+    res.status(200).json({ success: true, message: 'Інформацію оновлено.', data: inventoryData[itemIndex] });
+});
+
+// 6.5. PUT /inventory/:id/photo: Оновлення фото
+app.put('/inventory/:id/photo', upload.single('photo'), (req, res) => {
+    const id = parseInt(req.params.id);
+    const itemIndex = inventoryData.findIndex(i => i.id === id);
+    
+    if (itemIndex === -1) {
+        // Якщо не знайдено, видаляємо завантажений файл
+        if (req.file) fs.unlinkSync(req.file.path);
+        return res.status(404).json({ success: false, message: `Об'єкт з ID ${id} не знайдено.` });
+    }
+    
+    if (!req.file) {
+         return res.status(400).json({ success: false, message: 'Файл фото відсутній у запиті.' });
+    }
+    
+    // Якщо вже було старе фото, його можна видалити, щоб не засмічувати кеш
+    if (inventoryData[itemIndex].photo_filename) {
+        const oldFilePath = path.join(UPLOAD_DIR, inventoryData[itemIndex].photo_filename);
+        if (fs.existsSync(oldFilePath)) {
+            fs.unlinkSync(oldFilePath);
+        }
+    }
+
+    // Оновлюємо посилання
+    inventoryData[itemIndex].photo_filename = req.file.filename;
+    
+    res.status(200).json({ success: true, message: 'Фото успішно оновлено.', data: inventoryData[itemIndex] });
+});
 
 
 // ----------------------------------------------------
