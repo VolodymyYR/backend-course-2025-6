@@ -1,21 +1,19 @@
-// server.js
+// server.js (ПОВНА ЗАМІНА БЛОКУ 1)
 const express = require('express');
-const { program } = require('commander');
+// const { program } = require('commander'); // <--- ВИДАЛИТИ
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json'); // Буде створено пізніше
+const swaggerDocument = require('./swagger.json'); 
+
+// --- 1. ПРЯМЕ ВИЗНАЧЕННЯ АРГУМЕНТІВ (Обхід Commander.js) ---
+const host = '127.0.0.1';
+const port = 8080;
+const cache = './cache'; // Шлях до директорії кешу
 
 // --- 1. ОБРОБКА АРГУМЕНТІВ КОМАНДНОГО РЯДКА (COMMANDER.JS) ---
-program
-    .requiredOption('-h, --host <address>', 'адреса сервера')
-    .requiredOption('-p, --port <number>', 'порт сервера', parseInt)
-    .requiredOption('-c, --cache <path>', 'шлях до директорії кешу')
-    .parse(process.argv);
-
-const options = program.opts();
-const { host, port, cache } = options;
+// const { host, port, cache } = options;
 const app = express();
 
 const CACHE_DIR = path.resolve(cache);
@@ -82,16 +80,17 @@ app.post('/register', upload.single('photo'), (req, res) => {
     }
 
     const newItem = {
-        id: nextId++,
+        id: nextId, // Використовуємо поточний nextId
         inventory_name,
         description: description || 'No description provided',
         // Зберігаємо шлях до тимчасового файлу, щоб знайти його
         photo_filename: req.file ? req.file.filename : null, 
-        // URL для отримання фото (для GET /inventory/:id/photo)
-        photo_url: req.file ? `/inventory/${nextId-1}/photo` : null
+        // URL для отримання фото
+        photo_url: req.file ? `/inventory/${nextId}/photo` : null
     };
     
     inventoryData.push(newItem);
+    nextId++; // Збільшуємо ID після використання
     
     // Повертаємо 201 Created з новим об'єктом
     res.status(201).json({ 
@@ -101,6 +100,7 @@ app.post('/register', upload.single('photo'), (req, res) => {
     });
 });
 
+// 6.2. GET /inventory: Отримати список об'єктів
 app.get('/inventory', (req, res) => {
     // Повертаємо спрощений список для огляду
     const list = inventoryData.map(item => ({
@@ -156,7 +156,7 @@ app.put('/inventory/:id/photo', upload.single('photo'), (req, res) => {
     }
     
     if (!req.file) {
-         return res.status(400).json({ success: false, message: 'Файл фото відсутній у запиті.' });
+        return res.status(400).json({ success: false, message: 'Файл фото відсутній у запиті.' });
     }
     
     // Якщо вже було старе фото, його можна видалити, щоб не засмічувати кеш
@@ -210,14 +210,14 @@ app.get('/inventory/:id/photo', (req, res) => {
         return res.status(404).send('Файл не знайдено на сервері.');
     }
 
-    // Встановлення Content-Type (image/jpeg є загальним, але Express може визначити краще)
-    // Встановлюємо Content-Type для відповідності вимозі "image/jpeg"
+    // Встановлення Content-Type для відповідності вимозі "image/jpeg"
     res.setHeader('Content-Type', 'image/jpeg');
     
     // res.sendFile автоматично встановлює інші заголовки та передає файл
     res.status(200).sendFile(filePath);
 });
 
+// 6.8. GET /search: Пошук за ID (використовується формою SearchForm.html)
 app.get('/search', (req, res) => {
     const id = parseInt(req.query.id);
     const includePhoto = req.query.includePhoto; // 'on' якщо відмічено
@@ -246,28 +246,27 @@ app.get('/search', (req, res) => {
     res.status(200).json({ success: true, data: responseData });
 });
 
+
+// --- 6.9. ОБРОБКА НЕВІРНИХ МЕТОДІВ ДЛЯ /search (405) ---
+// Цей обробник перехопить запити POST, PUT, DELETE, etc. для /search
+// і має стояти перед загальним 404
+app.all('/search', (req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+        return res.status(405).send(`Method ${req.method} not allowed for /search.`); // 405 Method Not Allowed
+    } else {
+        next(); // Пропускаємо далі, хоча GET вже оброблено вище
+    }
+});
+
+
 // --- 7. ДОКУМЕНТАЦІЯ SWAGGER ---
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // --- 8. ОБРОБКА НЕІСНУЮЧИХ РОУТІВ (404) ---
+// Ловить усі запити, які не були оброблені попередніми роутами
 app.use((req, res) => {
     res.status(404).json({ success: false, message: 'Неіснуючий маршрут.' });
 });
-
-// Додаткова вимога: Обробка невірних методів для /search
-// Якщо хтось спробує DELETE, PUT і т.д.
-app.all('/search', (req, res, next) => {
-    if (req.method !== 'GET' && req.method !== 'HEAD') { // GET - дозволено
-        res.status(405).send(`Method ${req.method} not allowed for /search.`); // 405 Method Not Allowed
-    } else {
-        next(); // Пропускаємо далі до GET-обробника
-    }
-});
-
-// ----------------------------------------------------
-// (РОУТИ API БУДУТЬ ТУТ)
-// ----------------------------------------------------
-
 
 // --- 9. ЗАПУСК СЕРВЕРА ---
 app.listen(port, host, () => {
