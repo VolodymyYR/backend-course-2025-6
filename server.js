@@ -195,6 +195,29 @@ app.delete('/inventory/:id', (req, res) => {
     res.status(200).json({ success: true, message: `Об'єкт з ID ${id} успішно видалено.` });
 });
 
+// 6.7. GET /inventory/:id/photo: Отримання фото
+app.get('/inventory/:id/photo', (req, res) => {
+    const id = parseInt(req.params.id);
+    const item = inventoryData.find(i => i.id === id);
+
+    if (!item || !item.photo_filename) {
+        return res.status(404).send('Фото не знайдено або відсутнє для цього об\'єкта.');
+    }
+    
+    const filePath = path.join(UPLOAD_DIR, item.photo_filename);
+    
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).send('Файл не знайдено на сервері.');
+    }
+
+    // Встановлення Content-Type (image/jpeg є загальним, але Express може визначити краще)
+    // Встановлюємо Content-Type для відповідності вимозі "image/jpeg"
+    res.setHeader('Content-Type', 'image/jpeg');
+    
+    // res.sendFile автоматично встановлює інші заголовки та передає файл
+    res.status(200).sendFile(filePath);
+});
+
 // ----------------------------------------------------
 // (РОУТИ API БУДУТЬ ТУТ)
 // ----------------------------------------------------
