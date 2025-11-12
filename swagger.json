@@ -26,7 +26,7 @@
                 "summary": "Реєстрація нового об'єкта (з фото)",
                 "requestBody": {
                     "content": {
-                        "multipart/form-data": {
+                        "multipart/form-data": { 
                             "schema": {
                                 "type": "object",
                                 "properties": {
@@ -44,7 +44,7 @@
                                     }
                                 },
                                 "required": [
-                                    "inventory_name"
+                                    "inventory_name" 
                                 ]
                             }
                         }
@@ -68,7 +68,7 @@
                 "tags": [
                     "Inventory"
                 ],
-                "summary": "Отримати список всіх об'єктів",
+                "summary": "Отримати список всіх об'єктів", 
                 "responses": {
                     "200": {
                         "description": "Список об'єктів"
@@ -85,7 +85,7 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "path",
+                        "in": "path", 
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -106,6 +106,35 @@
                     "Inventory"
                 ],
                 "summary": "Оновити опис або ім'я об'єкта",
+                "parameters": [ 
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Унікальний ID об'єкта інвентаризації"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Нові дані для оновлення об'єкта",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "inventory_name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Оновлено"
@@ -120,9 +149,20 @@
                     "Inventory"
                 ],
                 "summary": "Видалити об'єкт за ID",
+                "parameters": [ 
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Унікальний ID об'єкта інвентаризації, який потрібно видалити"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Видалено"
+                        "description": "Об'єкт успішно видалено"
                     },
                     "404": {
                         "description": "Об'єкт не знайдено"
@@ -136,6 +176,17 @@
                     "Inventory"
                 ],
                 "summary": "Отримати фото об'єкта (Content-Type: image/jpeg)",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Унікальний ID об'єкта інвентаризації, чиє фото потрібно отримати"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Фото у форматі image/jpeg"
@@ -150,6 +201,17 @@
                     "Inventory"
                 ],
                 "summary": "Оновити фото об'єкта",
+                "parameters": [ 
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Унікальний ID об'єкта інвентаризації, чиє фото потрібно оновити"
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
@@ -184,7 +246,7 @@
                 "tags": [
                     "Inventory"
                 ],
-                "summary": "Пошук об'єкта за ID (з форми)",
+                "summary": "Пошук об'єкта за ID (через параметри URL)",
                 "parameters": [
                     {
                         "name": "id",
@@ -215,13 +277,43 @@
                 }
             },
             "post": {
-                 "tags": [
+                "tags": [
                     "Inventory"
                 ],
-                "summary": "Метод POST заборонено",
-                 "responses": {
-                    "405": {
-                        "description": "Метод POST не дозволено для цього роута"
+                "summary": "Пошук об'єктів за критеріями (ім'я, опис або назва фото)",
+                "requestBody": {
+                    "description": "Критерії пошуку. Достатньо вказати один з критеріїв.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "inventory_name": {
+                                        "type": "string",
+                                        "description": "Пошук за назвою інвентаризаційного об'єкта"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "description": "Пошук за описом об'єкта"
+                                    },
+                                    "photo_name": {
+                                        "type": "string",
+                                        "description": "Пошук за назвою/ідентифікатором фотографії"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Список знайдених об'єктів",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Невірний формат запиту або відсутні критерії пошуку"
                     }
                 }
             }

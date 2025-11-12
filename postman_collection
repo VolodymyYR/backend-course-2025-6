@@ -1,0 +1,262 @@
+{
+	"info": {
+		"_postman_id": "039b8c8f-637e-4c7d-b4ff-d27b2ade7ee9",
+		"name": "Lab_6",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49977864",
+		"_collection_link": "https://anifeelings02-4903745.postman.co/workspace/VolodumurYR's-Workspace~8d653ee3-8c30-405d-8eae-59b8c81d5a57/collection/49977864-039b8c8f-637e-4c7d-b4ff-d27b2ade7ee9?action=share&source=collection_link&creator=49977864"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "inventory_name",
+							"value": "Монітор Dell U2422H",
+							"description": "required",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Екран 24 дюйми, IPS, 60Hz",
+							"description": "string",
+							"type": "text"
+						},
+						{
+							"key": "photo",
+							"description": "format: binary",
+							"type": "file",
+							"src": "/D:/Товарка/Дропшипінг/фото/М'які іграшки/М'які іграшки/Гусак-обіймусь білий/Screenshot 2025-10-16 095611.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{host}}:{{port}}/register",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "inventory",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/inventory",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"inventory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "inventoryID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/inventory/1",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"inventory",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "inventoryPhoto",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/inventory/1/photo",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"inventory",
+						"1",
+						"photo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "newDescription",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"description\": \"Оновлений опис: 27 дюймів, 144Hz\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{host}}:{{port}}/inventory/1",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"inventory",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NewPhoto",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "photo",
+							"type": "file",
+							"src": "/D:/Товарка/Дропшипінг/фото/М'які іграшки/М'які іграшки/Гусак-обіймусь білий/Screenshot 2025-10-16 095635.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{host}}:{{port}}/inventory/1/photo",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"inventory",
+						"1",
+						"photo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"inventory_name\": \"Dell\", \"description\": \"144Hz\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{host}}:{{port}}/search",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/inventory/1",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"inventory",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": ""
+		},
+		{
+			"key": "port",
+			"value": ""
+		},
+		{
+			"key": "cache",
+			"value": ""
+		},
+		{
+			"value": ""
+		}
+	]
+}
