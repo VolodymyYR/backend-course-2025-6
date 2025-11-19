@@ -86,7 +86,6 @@
                     {
                         "name": "id",
                         "in": "path", 
-                        "required": true,
                         "schema": {
                             "type": "integer"
                         }
@@ -110,7 +109,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
                         "schema": {
                             "type": "integer"
                         },
@@ -153,7 +151,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
                         "schema": {
                             "type": "integer"
                         },
@@ -180,7 +177,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
                         "schema": {
                             "type": "integer"
                         },
@@ -205,7 +201,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
                         "schema": {
                             "type": "integer"
                         },
@@ -251,7 +246,6 @@
                     {
                         "name": "id",
                         "in": "query",
-                        "required": true,
                         "schema": {
                             "type": "integer"
                         }
@@ -259,7 +253,6 @@
                     {
                         "name": "includePhoto",
                         "in": "query",
-                        "required": false,
                         "schema": {
                             "type": "string",
                             "enum": ["on"],
